@@ -1,0 +1,23 @@
+{
+    "sqltools.connections": [
+        {
+            "connectionTimeout": 15,
+            "mssqlOptions": {
+                "appName": "SQLTools",
+                "useUTC": true,
+                "encrypt": true,
+                "trustServerCertificate": false
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "MSSQL",
+            "name": "agriconnect.database.windows.net",
+            "group": "agriconnectKE",
+            "database": "agriconnectKe",
+            "username": "retro",
+            "connectString": "Server=tcp:agriconnect.database.windows.net,1433;Initial Catalog=agriconnectKe;Persist Security Info=False;User ID=retro;Password={gr0up$S3KE};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        }
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
+}

@@ -1,32 +1,64 @@
 package com.ecommerce.agriconnectke.models;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-
 @Entity
-@Table(name="DriverLocations")
+@Table(name = "DriverLocations")
 public class DriverLocation {
+    
     @Id
-    @Column(name="driver_id")
+    @Column(name = "driver_id")
     private Long driverId;
 
-    @Column(name="latitude", nullable=false)
-    private Double latitude;
+    @NotNull
+    @Column(name = "latitude", nullable = false, precision = 9, scale = 6)
+    private BigDecimal latitude;
 
-    @Column(name="longitude", nullable=false)
-    private Double longitude;
+    @NotNull
+    @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
+    private BigDecimal longitude;
 
-    @Column(name="last_updated")
+    @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 
-    @PrePersist @PreUpdate
-    public void touch(){ lastUpdated = LocalDateTime.now(); }
+    @PrePersist
+    @PreUpdate
+    protected void onUpdate() {
+        lastUpdated = LocalDateTime.now();
+    }
 
-    // getters & setters
+    // Constructors
+    public DriverLocation() {}
+
+    public DriverLocation(Long driverId, BigDecimal latitude, BigDecimal longitude) {
+        this.driverId = driverId;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    // Getters and Setters
+    public Long getDriverId() { return driverId; }
+    public void setDriverId(Long driverId) { this.driverId = driverId; }
+
+    public BigDecimal getLatitude() { return latitude; }
+    public void setLatitude(BigDecimal latitude) { this.latitude = latitude; }
+
+    public BigDecimal getLongitude() { return longitude; }
+    public void setLongitude(BigDecimal longitude) { this.longitude = longitude; }
+
+    public LocalDateTime getLastUpdated() { return lastUpdated; }
+    public void setLastUpdated(LocalDateTime lastUpdated) { this.lastUpdated = lastUpdated; }
+
+    @Override
+    public String toString() {
+        return "DriverLocation{" +
+                "driverId=" + driverId +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", lastUpdated=" + lastUpdated +
+                '}';
+    }
 }

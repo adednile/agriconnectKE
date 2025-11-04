@@ -1,14 +1,11 @@
 package com.ecommerce.agriconnectke.controllers;
+
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.ecommerce.agriconnectke.dto.BidRequest;
 import com.ecommerce.agriconnectke.models.Bid;
 import com.ecommerce.agriconnectke.services.BidService;
 
@@ -22,18 +19,83 @@ public class BidController {
         this.bidService = bidService;
     }
 
-    @GetMapping
-    public List<Bid> getAllBids() {
-        return bidService.getAllBids();
+    @PostMapping
+    public ResponseEntity<?> placeBid(@RequestBody Bid bid) {
+        try {
+            Bid createdBid = bidService.placeBid(bid);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdBid);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/buyer/{buyerId}")
+    public ResponseEntity<List<Bid>> getUserBids(@PathVariable Long buyerId) {
+        List<Bid> bids = bidService.getUserBids(buyerId);
+        return ResponseEntity.ok(bids);
     }
 
     @GetMapping("/listing/{listingId}")
-    public List<Bid> getBidsByListing(@PathVariable Long listingId) {
-        return bidService.getBidsByListing(listingId);
+    public ResponseEntity<List<Bid>> getListingBids(@PathVariable Long listingId) {
+        List<Bid> bids = bidService.getListingBids(listingId);
+        return ResponseEntity.ok(bids);
     }
 
-    @PostMapping
-    public Bid placeBid(@RequestBody Bid bid) {
-        return bidService.placeBid(bid);
+    @PutMapping("/{bidId}/status")
+    public ResponseEntity<?> updateBidStatus(@PathVariable Long bidId, @RequestParam String status) {
+        try {
+            Bid updatedBid = bidService.updateBidStatus(bidId, status);
+            return ResponseEntity.ok(updatedBid);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
+    @GetMapping("/{bidId}")
+    public ResponseEntity<Bid> getBidById(@PathVariable Long bidId) {
+        return bidService.getBidById(bidId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/buyer/{buyerId}/status/{status}")
+    public ResponseEntity<List<Bid>> getUserBidsByStatus(
+            @PathVariable Long buyerId, 
+            @PathVariable String status) {
+        List<Bid> bids = bidService.getUserBidsByStatus(buyerId, status);
+        return ResponseEntity.ok(bids);
+    }
+
+    @GetMapping("/listing/{listingId}/status/{status}")
+    public ResponseEntity<List<Bid>> getListingBidsByStatus(
+            @PathVariable Long listingId, 
+            @PathVariable String status) {
+        List<Bid> bids = bidService.getListingBidsByStatus(listingId, status);
+        return ResponseEntity.ok(bids);
+    }
+
+    @DeleteMapping("/{bidId}")
+    public ResponseEntity<Void> deleteBid(@PathVariable Long bidId) {
+        try {
+            bidService.deleteBid(bidId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    // Additional method in BidController using DTOs
+@PostMapping("/v2")
+public ResponseEntity<?> placeBidV2(@RequestBody BidRequest bidRequest) {
+    try {
+        Bid bid = new Bid();
+        bid.setBuyerId(bidRequest.getBuyerId());
+        bid.setListingId(bidRequest.getListingId());
+        bid.setOfferPrice(bidRequest.getOfferPrice());
+        
+        Bid createdBid = bidService.placeBid(bid);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBid);
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
 }

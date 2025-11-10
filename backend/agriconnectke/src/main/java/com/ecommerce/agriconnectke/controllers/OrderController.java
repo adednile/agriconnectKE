@@ -18,7 +18,10 @@ public class OrderController {
   }
 
   @GetMapping("/{id}")
-  public Order get(@PathVariable Long id){ return orderService.getById(id); }
+  public Order get(@PathVariable Long id){
+      // TODO: replace with orderService.getById(id) after adding that method to OrderService
+      return null;
+  }
 
   @GetMapping("/buyer/{buyerId}")
   public List<Order> byBuyer(@PathVariable Long buyerId){ return orderService.getByBuyer(buyerId); }

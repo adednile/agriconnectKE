@@ -56,4 +56,23 @@ class NotificationController extends Controller
         return back()->with('success', 'All notifications cleared.');
     }
 
-    
+    public function getUnreadCount()
+    {
+        $count = Notification::where('user_id', Auth::id())
+            ->where('is_read', false)
+            ->count();
+
+        return response()->json(['count' => $count]);
+    }
+
+    public function getRecentNotifications()
+    {
+        $notifications = Notification::where('user_id', Auth::id())
+            ->where('is_read', false)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return response()->json($notifications);
+    }
+}

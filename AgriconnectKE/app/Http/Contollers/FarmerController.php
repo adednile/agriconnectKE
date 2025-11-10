@@ -1,0 +1,6 @@
+
+
+class FarmerController extends Controller
+{
+
+}

@@ -83,5 +83,34 @@
             </div>
         </div>
     </div>
-    
+       <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Quick Stats</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total Orders:</span>
+                        <strong>{{ $stats['total_orders'] }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Pending Orders:</span>
+                        <strong>{{ $stats['pending_orders'] }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total Sales:</span>
+                        <strong>Ksh {{ number_format($stats['total_sales'], 2) }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Drivers:</span>
+                        <strong>{{ $stats['total_drivers'] }}</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
  

@@ -195,4 +195,21 @@ class AdminController extends Controller
 
         return back()->with('success', 'Driver location updated successfully!');
     }
+
+    public function systemStats()
+    {
+        $monthlySales = Order::where('status', 'paid')
+            ->whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->sum('amount');
+
+        $weeklyOrders = Order::where('created_at', '>=', now()->subWeek())->count();
+
+        $popularProducts = Product::withCount('orders')
+            ->orderBy('orders_count', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('admin.system-stats', compact('monthlySales', 'weeklyOrders', 'popularProducts'));
+    }
 }

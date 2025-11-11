@@ -141,4 +141,30 @@ class AdminController extends Controller
         $product->delete();
         return back()->with('success', 'Product deleted successfully!');
     }
+
+    public function orders()
+    {
+        $orders = Order::with(['buyer', 'farmer', 'product', 'driver'])->latest()->get();
+        return view('admin.orders', compact('orders'));
+    }
+
+    public function updateOrderStatus(Request $request, Order $order)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,paid,shipped,delivered,cancelled'
+        ]);
+
+        $order->update(['status' => $request->status]);
+
+        // Notify buyer about status change
+        \App\Models\Notification::create([
+            'user_id' => $order->buyer_id,
+            'title' => 'Order Status Updated',
+            'message' => "Your order #{$order->id} status has been updated to: {$request->status}",
+            'type' => 'info'
+        ]);
+
+        return back()->with('success', 'Order status updated successfully!');
+    }
+
 }

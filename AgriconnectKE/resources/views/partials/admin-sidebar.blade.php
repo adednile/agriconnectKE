@@ -10,5 +10,10 @@
             Users
         </a>
     </li>
-    
+
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('admin.products') }}">
+            Products
+        </a>
+    </li>
 </ul>

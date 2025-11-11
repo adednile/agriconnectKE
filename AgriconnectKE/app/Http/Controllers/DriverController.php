@@ -58,3 +58,22 @@ class DriverController extends Controller
 
         return back()->with('success', 'Delivery status updated successfully!');
     }
+
+    public function updateLocation(Request $request)
+    {
+        $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric'
+        ]);
+
+        DriverLocation::updateOrCreate(
+            ['driver_id' => Auth::id()],
+            [
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'location_updated_at' => now()
+            ]
+        );
+
+        return response()->json(['success' => true, 'message' => 'Location updated successfully']);
+    }

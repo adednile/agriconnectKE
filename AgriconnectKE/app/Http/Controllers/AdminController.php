@@ -31,4 +31,26 @@ class AdminController extends Controller
 
         return view('admin.dashboard', compact('stats', 'recentOrders', 'recentUsers'));
     }
+
+    public function users()
+    {
+        $users = User::withCount(['products', 'orders'])->latest()->get();
+        return view('admin.users', compact('users'));
+    }
+
+    public function createUser()
+    {
+        return view('admin.create-user');
+    }
+
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8|confirmed',
+            'role' => 'required|in:farmer,buyer,driver,admin',
+            'phone' => 'required|string',
+            'address' => 'required|string'
+        ]);
 }

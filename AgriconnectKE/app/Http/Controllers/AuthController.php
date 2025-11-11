@@ -62,4 +62,29 @@ class AuthController extends Controller
             'phone' => 'required|string',
             'address' => 'required|string'
         ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'phone' => $request->phone,
+            'address' => $request->address
+        ]);
+
+        Auth::login($user);
+
+        // Redirect based on role
+        switch ($user->role) {
+            case 'farmer':
+                return redirect()->route('farmer.dashboard');
+            case 'buyer':
+                return redirect()->route('buyer.dashboard');
+            case 'driver':
+                return redirect()->route('driver.dashboard');
+            default:
+                return redirect()->route('home');
+        }
+    }
+    
 }

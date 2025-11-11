@@ -99,4 +99,46 @@ class AdminController extends Controller
         $user->delete();
         return back()->with('success', 'User deleted successfully!');
     }
+
+    public function products()
+    {
+        $products = Product::with('farmer')->latest()->get();
+        return view('admin.products', compact('products'));
+    }
+
+    public function editProduct(Product $product)
+    {
+        return view('admin.edit-product', compact('product'));
+    }
+
+    public function updateProduct(Request $request, Product $product)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'category' => 'required|string',
+            'is_available' => 'boolean',
+            'accepts_bids' => 'boolean'
+        ]);
+
+        $product->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+            'category' => $request->category,
+            'is_available' => $request->has('is_available'),
+            'accepts_bids' => $request->has('accepts_bids')
+        ]);
+
+        return redirect()->route('admin.products')->with('success', 'Product updated successfully!');
+    }
+
+    public function deleteProduct(Product $product)
+    {
+        $product->delete();
+        return back()->with('success', 'Product deleted successfully!');
+    }
 }

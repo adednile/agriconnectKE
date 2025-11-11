@@ -25,3 +25,36 @@ class DriverController extends Controller
 
         return view('driver.dashboard', compact('assignedOrders', 'completedOrders', 'pendingOrders', 'earnings'));
     }
+
+    public function deliveries()
+    {
+        $orders = Order::where('driver_id', Auth::id())
+            ->with('product', 'buyer', 'farmer')
+            ->latest()
+            ->get();
+
+        return view('driver.deliveries', compact('orders'));
+    }
+
+    public function updateDeliveryStatus(Request $request, Order $order)
+    {
+        if ($order->driver_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'status' => 'required|in:shipped,delivered'
+        ]);
+
+        $order->update(['status' => $request->status]);
+
+        // Notify buyer
+        Notification::create([
+            'user_id' => $order->buyer_id,
+            'title' => 'Delivery Status Updated',
+            'message' => "Your order #{$order->id} has been {$request->status}",
+            'type' => 'info'
+        ]);
+
+        return back()->with('success', 'Delivery status updated successfully!');
+    }

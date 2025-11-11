@@ -53,4 +53,50 @@ class AdminController extends Controller
             'phone' => 'required|string',
             'address' => 'required|string'
         ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'phone' => $request->phone,
+            'address' => $request->address
+        ]);
+
+        return redirect()->route('admin.users')->with('success', 'User created successfully!');
+    }
+
+    public function editUser(User $user)
+    {
+        return view('admin.edit-user', compact('user'));
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'role' => 'required|in:farmer,buyer,driver,admin',
+            'phone' => 'required|string',
+            'address' => 'required|string'
+        ]);
+
+        $user->update($request->only(['name', 'email', 'role', 'phone', 'address']));
+
+        if ($request->filled('password')) {
+            $user->update(['password' => Hash::make($request->password)]);
+        }
+
+        return redirect()->route('admin.users')->with('success', 'User updated successfully!');
+    }
+
+    public function deleteUser(User $user)
+    {
+        if ($user->id === Auth::id()) {
+            return back()->with('error', 'You cannot delete your own account.');
+        }
+
+        $user->delete();
+        return back()->with('success', 'User deleted successfully!');
+    }
 }

@@ -77,3 +77,13 @@ class DriverController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Location updated successfully']);
     }
+
+    public function getCurrentLocation()
+    {
+        $location = DriverLocation::where('driver_id', Auth::id())->first();
+        
+        return response()->json([
+            'latitude' => $location->latitude ?? 0,
+            'longitude' => $location->longitude ?? 0
+        ]);
+    }

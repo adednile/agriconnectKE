@@ -19,4 +19,9 @@
             Bids
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('farmer.sales') }}">
+            Sales
+        </a>
+    </li>
 </ul>

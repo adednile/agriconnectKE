@@ -14,3 +14,39 @@
         </form>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-12">
+        @if($notifications->count() > 0)
+            <div class="list-group">
+                @foreach($notifications as $notification)
+                <div class="list-group-item {{ $notification->is_read ? '' : 'bg-light' }}">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">{{ $notification->title }}</h6>
+                        <small>{{ $notification->created_at->diffForHumans() }}</small>
+                    </div>
+                    <p class="mb-1">{{ $notification->message }}</p>
+                    <div class="mt-2">
+                        @if(!$notification->is_read)
+                        <form action="{{ route('notifications.read', $notification) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-outline-success">Mark as Read</button>
+                        </form>
+                        @endif
+                        <form action="{{ route('notifications.destroy', $notification) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        @else
+            <div class="alert alert-info">
+                <p>You have no notifications.</p>
+            </div>
+        @endif
+    </div>
+</div>
+@endsection

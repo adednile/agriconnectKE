@@ -9,4 +9,9 @@
             My Products
         </a>
     </li>
+     <li class="nav-item">
+        <a class="nav-link" href="{{ route('farmer.products.create') }}">
+            Add Product
+        </a>
+    </li>
 </ul>

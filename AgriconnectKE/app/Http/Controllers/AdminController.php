@@ -167,4 +167,32 @@ class AdminController extends Controller
         return back()->with('success', 'Order status updated successfully!');
     }
 
+    public function trackDrivers()
+    {
+        $drivers = User::drivers()->with('driverLocation')->get();
+        return view('admin.track-drivers', compact('drivers'));
+    }
+
+    public function updateDriverLocation(Request $request, User $driver)
+    {
+        if (!$driver->isDriver()) {
+            return back()->with('error', 'User is not a driver.');
+        }
+
+        $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric'
+        ]);
+
+        DriverLocation::updateOrCreate(
+            ['driver_id' => $driver->id],
+            [
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'location_updated_at' => now()
+            ]
+        );
+
+        return back()->with('success', 'Driver location updated successfully!');
+    }
 }

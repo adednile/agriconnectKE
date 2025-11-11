@@ -87,3 +87,17 @@ class DriverController extends Controller
             'longitude' => $location->longitude ?? 0
         ]);
     }
+
+    public function earnings()
+    {
+        $completedOrders = Order::where('driver_id', Auth::id())
+            ->where('status', 'delivered')
+            ->with('product', 'buyer')
+            ->latest()
+            ->get();
+
+        $totalEarnings = $completedOrders->sum('delivery_cost');
+        $monthlyEarnings = $completedOrders->where('updated_at', '>=', now()->subMonth())->sum('delivery_cost');
+
+        return view('driver.earnings', compact('completedOrders', 'totalEarnings', 'monthlyEarnings'));
+    }

@@ -101,3 +101,31 @@ class DriverController extends Controller
 
         return view('driver.earnings', compact('completedOrders', 'totalEarnings', 'monthlyEarnings'));
     }
+
+    public function acceptDelivery(Order $order)
+    {
+        if ($order->driver_id !== null) {
+            return back()->with('error', 'This order is already assigned to another driver.');
+        }
+
+        $order->update(['driver_id' => Auth::id()]);
+
+        // Notify buyer
+        Notification::create([
+            'user_id' => $order->buyer_id,
+            'title' => 'Driver Assigned',
+            'message' => "A driver has been assigned to your order #{$order->id}",
+            'type' => 'info'
+        ]);
+
+        // Notify farmer
+        Notification::create([
+            'user_id' => $order->farmer_id,
+            'title' => 'Driver Assigned',
+            'message' => "A driver has been assigned to order #{$order->id}",
+            'type' => 'info'
+        ]);
+
+        return back()->with('success', 'Delivery accepted successfully!');
+    }
+}
